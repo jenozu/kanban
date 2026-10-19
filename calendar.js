@@ -259,7 +259,7 @@
     event.linkedTaskId=$("linkedTask").value||"";
     event.notes=$("eventNotes").value.slice(0,1000);
     if(!existing)state.events.push(event);
-    save();selected=date;closeDialog();render();toast(existing?"Event updated":"Event added to your timetable");
+    save();if(!existing)selected=date;closeDialog();render();toast(existing?"Event updated":"Event added to your timetable");
   }
   function deleteEvent(){
     var existing=state.events.find(function(e){return e.id===editing;});
