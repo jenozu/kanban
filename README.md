@@ -1,28 +1,47 @@
-# Driftboard — Personal Projects
+# Driftboard — Personal Projects & Daily Routines
 
-A private, standalone Kanban board for tracking multiple personal projects. Built as a single HTML file: no account, database, npm install, API key, or paid service required.
+A personal Kanban board and calendar to organize projects, daily commitments, habits, and schedules. No paid services, account, npm installation, or API keys required.
 
-## Start
+**Live app:** https://jenozu-kanban.vercel.app
 
-Open `index.html` in Chrome, Edge, Firefox, or Safari. Or host this folder on any static hosting provider such as Vercel, GitHub Pages, or Netlify.
+## Pages
 
-## Features
+- **Kanban:** `index.html` — four drag-and-drop task columns, projects, checklists, priorities, due dates, search, focus view, dark/light themes.
+- **Calendar & routines:** `calendar.html` — day, week, and month views for fixed appointments and flexible tasks. Reach it from the main sidebar.
+- **Calendar logic:** `calendar.js` — recurring events (daily, weekdays, chosen days), date/time scheduling, per-occurrence completion, starter routine template, and task linking.
+- **Browser alerts:** `calendar-alerts.js` — checks for scheduled events with 5-minute reminders when you are viewing the main Kanban board.
 
-- Drag tasks between Backlog, In progress, Review, and Done; reorder within columns.
-- Add, edit, star, and delete tasks and projects.
-- Due dates, priorities, searchable tags, and checklists.
-- Project overview, focused tasks, and completed tasks.
-- Board and list views; project and priority filters; task search.
-- Dark / light themes; keyboard shortcuts: `N` for new task, `/` to search, `Esc` to close a dialog.
-- Local browser saving, JSON export, and JSON import.
-- Responsive layout for desktop, tablet, and phone.
+## Getting started
 
-## Important: data storage
+Open the hosted app and select **Calendar & routines** from the sidebar. Click **New event** to schedule a block. Choose the date, times, repeat pattern, and whether it is a fixed commitment or flexible task.
 
-Your data is stored in **the browser's localStorage on this device and origin**. It does *not* automatically synchronize across devices or between a local file and a hosted website. Data can disappear if you clear site data or use private browsing. Use **Export your data** regularly, then **Import backup** to restore or move to another device/browser.
+You can also click **Load suggested routine**. This adds six editable examples: weekday work, daily room reset, exercise on Monday/Wednesday/Friday, nightly dinner, bedtime wind-down, and a weekly planning session.
 
-The initial tasks are illustrative starter examples and can be edited/deleted.
+- Select **Day** for today's agenda and mark blocks done as you complete them.
+- Select **Week** to see all your classes/appointments at a glance.
+- Select **Month** to plan farther ahead.
+- On a date with outstanding Kanban due dates, click **Schedule** to time-block an existing task. Marking its calendar entry complete also marks the linked Kanban task done.
 
-## Hosting
+## Reminders: important limitation
 
-For Vercel, create a new project and deploy this directory as a static site (no framework or build command needed). To synchronize tasks across devices, add authentication and a real database in a later version.
+Click **Enable 5-minute alerts** on the Calendar page and allow browser notification permission. Alerts are checked only **while a Driftboard browser tab is open**. Browser suspension and background throttling can delay or prevent those alerts. The site does **not** send notifications after all tabs are closed, and there is no push-notification server.
+
+For reminders on your phone when the site is closed, click **Export calendar (.ics)**, import it into your preferred calendar app, and **verify** that the app imported its 5-minute event alarms and has permission to send notifications. Calendar providers vary in whether they preserve imported alarms. Export is a snapshot: changes made later in Driftboard do not automatically update the imported calendar, and re-importing may duplicate events.
+
+## Data and backups
+
+The app uses localStorage on each browser/origin:
+
+- `driftboard-personal-v1`: projects, Kanban tasks and display theme.
+- `driftboard-calendar-v1`: scheduled series and daily completion history.
+- `driftboard-calendar-alerts-v1`: notification deduplication.
+
+The main board's **Export your data** creates a JSON backup of **both Kanban and calendar**. Its **Import backup** restores calendar data when present. An older board-only JSON backup does not overwrite the existing calendar.
+
+Data **does not synchronize** between phones, computers or browsers. It can be lost after clearing site data/private browsing. Export JSON backups regularly and keep them somewhere safe.
+
+## Hosting and development
+
+Static files only; deploy this repo root on Vercel (no framework/build command required). To add reliable closed-app push reminders and multi-device sync in future, use authentication, persistent backend storage, push subscriptions and a reminder scheduler.
+
+Keyboard shortcuts in Kanban: `N` new task, `/` search, `Esc` close dialogs.
