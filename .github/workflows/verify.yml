@@ -1,0 +1,22 @@
+name: Verify static app
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check calendar.js
+          node --check calendar-alerts.js
+          node -e "const fs=require('fs'); const html=fs.readFileSync('index.html','utf8'); const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]; for(const [,code] of scripts){new (require('vm').Script)(code)}"
+      - name: Verify calendar navigation and files
+        run: |
+          node -e "const fs=require('fs');const assert=require('assert');const html=fs.readFileSync('index.html','utf8');const cal=fs.readFileSync('calendar.html','utf8');assert(html.includes('href=\"/calendar.html\"'));assert(cal.includes('src=\"/calendar.js\"'));assert(fs.existsSync('calendar-alerts.js'));"
