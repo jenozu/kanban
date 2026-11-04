@@ -16,7 +16,11 @@ jobs:
         run: |
           node --check calendar.js
           node --check calendar-alerts.js
+          node --check calendar-import.js
+          node --check api/ics.js
           node -e "const fs=require('fs'); const html=fs.readFileSync('index.html','utf8'); const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]; for(const [,code] of scripts){new (require('vm').Script)(code)}"
+      - name: Test calendar import
+        run: TZ=America/Toronto node tests/ics.test.js
       - name: Verify calendar navigation and files
         run: |
           node -e "const fs=require('fs');const assert=require('assert');const html=fs.readFileSync('index.html','utf8');const cal=fs.readFileSync('calendar.html','utf8');assert(html.includes('href=\"/calendar.html\"'));assert(cal.includes('src=\"/calendar.js\"'));assert(fs.existsSync('calendar-alerts.js'));"

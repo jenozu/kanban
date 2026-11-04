@@ -9,6 +9,7 @@ A personal Kanban board and calendar to organize projects, daily commitments, ha
 - **Kanban:** `index.html` — four drag-and-drop task columns, projects, checklists, priorities, due dates, search, focus view, dark/light themes.
 - **Calendar & routines:** `calendar.html` — day, week, and month views for fixed appointments and flexible tasks. Reach it from the main sidebar.
 - **Calendar logic:** `calendar.js` — recurring events (daily, weekdays, chosen days), date/time scheduling, per-occurrence completion, starter routine template, and task linking.
+- **Calendar import:** `calendar-import.js` (`.ics` reader with recurring-event expansion) and `api/ics.js` (small Vercel function that fetches calendar feed URLs) power **Import from calendar** in the Kanban sidebar.
 - **Browser alerts:** `calendar-alerts.js` — checks for scheduled events with 5-minute reminders when you are viewing the main Kanban board.
 
 ## Getting started
@@ -21,6 +22,23 @@ You can also click **Load suggested routine**. This adds six editable examples: 
 - Select **Week** to see all your classes/appointments at a glance.
 - Select **Month** to plan farther ahead.
 - On a date with outstanding Kanban due dates, click **Schedule** to time-block an existing task. Marking its calendar entry complete also marks the linked Kanban task done.
+
+## Adding calendar events to your board
+
+Click **Import from calendar** at the bottom of the Kanban sidebar, then either:
+
+- paste your calendar's private iCal address and press **Fetch** (Google Calendar: Settings → your calendar → *Secret address in iCal format*; Apple and Outlook offer a similar "subscribe/publish" link), or
+- upload an `.ics` file exported from any calendar app.
+
+Upcoming events (7–90 days) are listed by day. Tick the ones you want, choose a project and column, and they become tasks with the event date as the due date, the time and location in the description, and a `Calendar` tag. Nothing is added until you choose it, and repeating events (daily, weekly, monthly, yearly, with exceptions and moved/cancelled instances) are expanded into their individual dates.
+
+Notes:
+
+- Events already on the board, or added before, are hidden so re-syncing doesn't create duplicates. Use **Also show events already added** to see them.
+- This is one-way: calendar to board. Editing or completing a task does not change your calendar.
+- Rules such as "second Tuesday of every month" can't be expanded; only the first date of those events is considered and the dialog says so.
+- Feed addresses are fetched through `/api/ics` because browsers block most calendar servers. The function only allows `https` addresses on public servers, caps responses at 2 MB, and stores nothing. Your feed address is saved only in this browser's localStorage. It is a secret link, so treat it like a password. It is not included in JSON backups.
+- Fetching a feed only works on the hosted app (or `vercel dev`); uploading a file works anywhere.
 
 ## Reminders: important limitation
 
@@ -35,6 +53,7 @@ The app uses localStorage on each browser/origin:
 - `driftboard-personal-v1`: projects, Kanban tasks and display theme.
 - `driftboard-calendar-v1`: scheduled series and daily completion history.
 - `driftboard-calendar-alerts-v1`: notification deduplication.
+- `driftboard-ics-v1`: saved calendar feed address and the events already imported.
 
 The main board's **Export your data** creates a JSON backup of **both Kanban and calendar**. Its **Import backup** restores calendar data when present. An older board-only JSON backup does not overwrite the existing calendar.
 
@@ -42,6 +61,6 @@ Data **does not synchronize** between phones, computers or browsers. It can be l
 
 ## Hosting and development
 
-Static files only; deploy this repo root on Vercel (no framework/build command required). To add reliable closed-app push reminders and multi-device sync in future, use authentication, persistent backend storage, push subscriptions and a reminder scheduler.
+Static files plus one serverless function (`api/ics.js`, used only for feed-URL import); deploy this repo root on Vercel (no framework/build command required, no environment variables or API keys). Run `TZ=America/Toronto node tests/ics.test.js` to test the calendar reader. To add reliable closed-app push reminders and multi-device sync in future, use authentication, persistent backend storage, push subscriptions and a reminder scheduler.
 
 Keyboard shortcuts in Kanban: `N` new task, `/` search, `Esc` close dialogs.
